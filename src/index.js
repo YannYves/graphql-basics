@@ -6,6 +6,9 @@ const typeDefs = `
 type Query {
  me : User!
  post: Post!
+ greetings(name: String) : String!
+ grades: [Int!]!
+ add(numbers : [Float!]!) :  Float!
 }
 
 type User {
@@ -28,6 +31,9 @@ type Post {
 // RESOLVERS
 const resolvers = {
   Query: {
+    grades(parent, args, ctx, info) {
+      return [99, 88, 93];
+    },
     me() {
       return {
         id: '123456',
@@ -44,6 +50,21 @@ const resolvers = {
         body: 'hello',
         published: true,
       };
+    },
+
+    greetings(parent, args, ctx, info) {
+      if (args.name) {
+        return `Hello ${args.name}`;
+      }
+      return 'Hello';
+    },
+
+    add(parent, args, ctx, info) {
+      if (args.numbers.length === 0) {
+        return 0;
+      }
+
+      return args.numbers.reduce((acc, current) => acc + current);
     },
   },
 };
