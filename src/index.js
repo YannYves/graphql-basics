@@ -1,14 +1,62 @@
 const { GraphQLServer } = require('graphql-yoga');
 // Scalar tyoes - Strings, Boolean, Int, Float, ID
 
+//demo
+
+const users = [
+  {
+    id: '1',
+    name: 'toto',
+    email: 'example@example.com',
+    age: 30,
+  },
+
+  {
+    id: '2',
+    name: 'toto2',
+    email: 'example2@example.com',
+    age: 32,
+  },
+
+  {
+    id: '3',
+    name: 'tot3',
+    email: 'example3@example.com',
+    age: 33,
+  },
+];
+
+const posts = [
+  {
+    id: '1',
+    title: 'hello',
+    body: 'aie aie',
+    published: true,
+  },
+
+  {
+    id: '2',
+    title: 'janine',
+    body: 'beau',
+    published: true,
+  },
+
+  {
+    id: '3',
+    title: 'flip',
+    body: 'documents',
+    published: true,
+  },
+];
+
 // TYPE DEF === APP SCHEMA
 const typeDefs = `
 type Query {
+ users(query : String) : [User!]!
+ posts(query : String):  [Post!]!
  me : User!
  post: Post!
- greetings(name: String) : String!
- grades: [Int!]!
- add(numbers : [Float!]!) :  Float!
+
 }
 
 type User {
@@ -24,16 +72,11 @@ type Post {
   body: String!
   published : Boolean!
 }
-
-
 `;
 
 // RESOLVERS
 const resolvers = {
   Query: {
-    grades(parent, args, ctx, info) {
-      return [99, 88, 93];
-    },
     me() {
       return {
         id: '123456',
@@ -52,19 +95,29 @@ const resolvers = {
       };
     },
 
-    greetings(parent, args, ctx, info) {
-      if (args.name) {
-        return `Hello ${args.name}`;
+    users(parent, args, ctx, info) {
+      if (!args.query) {
+        return users;
       }
-      return 'Hello';
+
+      return users.filter((user) =>
+        user.name.toLowerCase().includes(args.query.toLowerCase())
+      );
     },
 
-    add(parent, args, ctx, info) {
-      if (args.numbers.length === 0) {
-        return 0;
+    posts(parent, args, ctx, info) {
+      if (!args.query) {
+        return posts;
       }
-
-      return args.numbers.reduce((acc, current) => acc + current);
+      return posts.filter(
+        (post) =>
+          post.body
+            .toLocaleLowerCase()
+            .includes(args.query.toLocaleLowerCase()) ||
+          post.title
+            .toLocaleLowerCase()
+            .includes(args.query.toLocaleLowerCase())
+      );
     },
   },
 };
