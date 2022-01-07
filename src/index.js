@@ -1,20 +1,49 @@
 const { GraphQLServer } = require('graphql-yoga');
+// Scalar tyoes - Strings, Boolean, Int, Float, ID
+
 // TYPE DEF === APP SCHEMA
 const typeDefs = `
 type Query {
-  hello: String!
-  name: String!
+ me : User!
+ post: Post!
 }
+
+type User {
+  id: ID!
+  name : String!
+  email: String!
+  age : Int
+}
+
+type Post {
+  id: ID!
+  title : String!
+  body: String!
+  published : Boolean!
+}
+
+
 `;
 
 // RESOLVERS
 const resolvers = {
   Query: {
-    hello() {
-      return 'this is my first query ';
+    me() {
+      return {
+        id: '123456',
+        name: 'Mike',
+        email: 'mike@example.com',
+        age: 30,
+      };
     },
-    name() {
-      return 'this is my second query ';
+
+    post() {
+      return {
+        id: '1234567',
+        title: 'post title',
+        body: 'hello',
+        published: true,
+      };
     },
   },
 };
